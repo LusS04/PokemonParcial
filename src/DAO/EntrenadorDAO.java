@@ -140,6 +140,52 @@ public class EntrenadorDAO implements IEntrenadorDAO {
         }
         return entrenadores;
     }
+    
+    public static boolean guardarEntrenador(Entrenador entrenador) {
+        int nuevoId = generarNuevoId();
+
+        String sql = "INSERT INTO entrenador (id, nombre, usuario_id, nacionalidad, genero, edad, fecha_nacimiento) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = Conexion.getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, nuevoId);
+            stmt.setString(2, entrenador.getNombre());
+            stmt.setInt(3, entrenador.getUsuarioId());
+            stmt.setString(4, entrenador.getNacionalidad());
+            stmt.setString(5, String.valueOf(entrenador.getGenero()));
+            stmt.setInt(6, entrenador.getEdad());
+            stmt.setString(7, entrenador.getFechaNacimiento());
+
+            stmt.executeUpdate();
+
+            entrenador.setId(nuevoId); // Actualizar el ID del entrenador en el objeto
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static int generarNuevoId() {
+        String sql = "SELECT MAX(id) AS max_id FROM entrenador";
+
+        try (Connection conn = Conexion.getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("max_id") + 1;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 1; // Si no hay entrenadores, comenzar desde 1
+    }
+
 
     public boolean actualizarEntrenador(Entrenador entrenador) {
         String sql = "UPDATE entrenador SET nombre = ?, fecha_nacimiento = ?, nacionalidad = ?, genero = ?, edad = ?, usuario_id = ? WHERE id = ?";

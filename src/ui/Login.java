@@ -56,8 +56,8 @@ public class Login extends JFrame {
 
         if (usuario != null) {
             JOptionPane.showMessageDialog(this, "Bienvenido, " + usuario.getNombreCompleto());
-            Emparejamiento emparejamiento = new Emparejamiento(usuario);
-            emparejamiento.setVisible(true);
+            MenuPrincipal menuPrincipal  = new MenuPrincipal (usuario);
+            menuPrincipal .setVisible(true);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Usuario no encontrado. Verifica tu nickname.");
